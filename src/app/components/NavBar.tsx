@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { AppBar, Toolbar, Box, Button } from "@mui/material";
 import { useNav } from "../NavContext";
 
@@ -79,14 +80,18 @@ export default function NavBar() {
         }}
       >
         <Box sx={{ display: "flex", gap: 1.5, height: "100%" }}>
-          <Button href="/#profile" sx={navButtonSx}>
+          <Button component={Link} href="/#profile" sx={navButtonSx}>
             Profile
           </Button>
-          <Button href="/#work" sx={navButtonSx}>
+          <Button component={Link} href="/#work" sx={navButtonSx}>
             Work
           </Button>
-          <Button href="/#contact" sx={navButtonSx}>
+          <Button component={Link} href="/#contact" sx={navButtonSx}>
             Contact
+          </Button>
+
+          <Button component={Link} href="/resume" sx={navButtonSx}>
+            Resume
           </Button>
         </Box>
       </Toolbar>
