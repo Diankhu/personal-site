@@ -18,7 +18,7 @@ export default function Home() {
       (entries) => {
         const entry = entries[0];
         // “fully in profile” feel (tweak if you want earlier)
-        const show = entry.isIntersecting && entry.intersectionRatio >= 0.9;
+        const show = entry.isIntersecting && entry.intersectionRatio >= 0.7;
         setNavVisible(show);
       },
       { threshold: [0, 0.25, 0.6, 1] },
