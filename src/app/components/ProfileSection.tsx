@@ -76,7 +76,7 @@ export default function ProfileSection({ sectionRef }: ProfileSectionProps) {
     >
       <Stack spacing={4.5} sx={{ maxWidth: 1150, mx: "auto" }}>
         {/* Header */}
-        <Box>
+        <Box sx={{ textAlign: { xs: "center", md: "left" } }}>
           <Typography
             sx={{
               fontSize: { xs: 44, md: 58 },
@@ -100,7 +100,7 @@ export default function ProfileSection({ sectionRef }: ProfileSectionProps) {
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={{ xs: 4, md: 6 }}
-          alignItems="flex-start"
+          alignItems={{ xs: "center", md: "flex-start" }}
         >
           {/* Photo */}
           <Paper
@@ -113,6 +113,7 @@ export default function ProfileSection({ sectionRef }: ProfileSectionProps) {
               flexShrink: 0,
               backgroundColor: "#fff",
               boxShadow: "0 20px 40px rgba(10,25,55,0.12)",
+              mx: { xs: "auto", md: 0 },
             }}
           >
             <Box
@@ -135,9 +136,24 @@ export default function ProfileSection({ sectionRef }: ProfileSectionProps) {
           </Paper>
 
           {/* Right content */}
-          <Stack spacing={3} sx={{ flex: 1 }}>
+          <Stack
+            spacing={3}
+            sx={{
+              flex: 1,
+              width: "100%",
+              alignItems: { xs: "center", md: "stretch" },
+            }}
+          >
             {/* Chips */}
-            <Stack direction="row" flexWrap="wrap" gap={1.2}>
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              gap={1.2}
+              sx={{
+                justifyContent: { xs: "center", md: "flex-start" },
+                width: "100%",
+              }}
+            >
               <Chip label="Full-stack" sx={chipSx} />
               <Chip label="Next.js + React" sx={chipSx} />
               <Chip label="TypeScript" sx={chipSx} />
@@ -146,34 +162,38 @@ export default function ProfileSection({ sectionRef }: ProfileSectionProps) {
               <Chip label="UI polish" sx={chipSx} />
             </Stack>
 
-            {/* Quick intro (anchor card) */}
-            <Paper elevation={0} sx={popCardSx}>
-              <Typography sx={{ fontWeight: 900, mb: 1.5 }}>
-                Quick intro
-              </Typography>
-
-              <Stack spacing={1.6} sx={{ opacity: 0.88, fontSize: 16 }}>
-                <Typography>
-                  I build production full-stack web apps and I’m currently
-                  building a multi-tenant rental SaaS platform end-to-end (admin
-                  dashboard, backend APIs, data models, auth, and payments).
+            {/* Quick intro */}
+            <Box sx={{ width: "100%" }}>
+              <Paper elevation={0} sx={popCardSx}>
+                <Typography sx={{ fontWeight: 900, mb: 1.5 }}>
+                  Quick intro
                 </Typography>
 
-                <Typography>
-                  I studied Computer Science at Michigan State University and
-                  have a Japanese language background — conversational level
-                  (JLPT N3-ish), including study abroad experience in Japan.
-                </Typography>
+                <Stack spacing={1.6} sx={{ opacity: 0.88, fontSize: 16 }}>
+                  <Typography>
+                    I build production full-stack web apps and I’m currently
+                    building a multi-tenant rental SaaS platform end-to-end
+                    (admin dashboard, backend APIs, data models, auth, and
+                    payments).
+                  </Typography>
 
-                <Typography>
-                  Outside of coding: I’m into reading and I play piano.
-                </Typography>
-              </Stack>
-            </Paper>
+                  <Typography>
+                    I studied Computer Science at Michigan State University and
+                    have a Japanese language background — conversational level
+                    (JLPT N3-ish), including study abroad experience in Japan.
+                  </Typography>
+
+                  <Typography>
+                    Outside of coding: I’m into reading and I play piano.
+                  </Typography>
+                </Stack>
+              </Paper>
+            </Box>
 
             {/* Two cards row */}
             <Box
               sx={{
+                width: "100%",
                 display: "grid",
                 gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
                 gap: { xs: 2.75, md: 3.25 },
@@ -205,63 +225,66 @@ export default function ProfileSection({ sectionRef }: ProfileSectionProps) {
             </Box>
 
             {/* Tech Stack */}
-            <Paper elevation={0} sx={techCardSx}>
-              <Typography sx={{ fontWeight: 900, mb: 2.25 }}>
-                Tech Stack
-              </Typography>
+            <Box sx={{ width: "100%" }}>
+              <Paper elevation={0} sx={techCardSx}>
+                <Typography sx={{ fontWeight: 900, mb: 2.25 }}>
+                  Tech Stack
+                </Typography>
 
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" },
-                  gap: { xs: 2.25, md: 3.25 },
-                }}
-              >
-                <Stack spacing={0.9}>
-                  <Typography sx={{ fontWeight: 800 }}>Frontend</Typography>
-                  <Typography sx={{ opacity: 0.86 }}>
-                    React, Next.js, TypeScript, JavaScript, Angular, Material UI
-                  </Typography>
-                </Stack>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" },
+                    gap: { xs: 2.25, md: 3.25 },
+                  }}
+                >
+                  <Stack spacing={0.9}>
+                    <Typography sx={{ fontWeight: 800 }}>Frontend</Typography>
+                    <Typography sx={{ opacity: 0.86 }}>
+                      React, Next.js, TypeScript, JavaScript, Angular, Material
+                      UI
+                    </Typography>
+                  </Stack>
 
-                <Stack spacing={0.9}>
-                  <Typography sx={{ fontWeight: 800 }}>Backend</Typography>
-                  <Typography sx={{ opacity: 0.86 }}>
-                    Node.js, Java, .NET, Python, C++, COBOL
-                  </Typography>
-                </Stack>
+                  <Stack spacing={0.9}>
+                    <Typography sx={{ fontWeight: 800 }}>Backend</Typography>
+                    <Typography sx={{ opacity: 0.86 }}>
+                      Node.js, Java, .NET, Python, C++, COBOL
+                    </Typography>
+                  </Stack>
 
-                <Stack spacing={0.9}>
-                  <Typography sx={{ fontWeight: 800 }}>
-                    Cloud / Infrastructure
-                  </Typography>
-                  <Typography sx={{ opacity: 0.86 }}>
-                    AWS (Lambda, API Gateway, RDS, S3, CloudFront), Serverless
-                  </Typography>
-                </Stack>
+                  <Stack spacing={0.9}>
+                    <Typography sx={{ fontWeight: 800 }}>
+                      Cloud / Infrastructure
+                    </Typography>
+                    <Typography sx={{ opacity: 0.86 }}>
+                      AWS (Lambda, API Gateway, RDS, S3, CloudFront), Serverless
+                    </Typography>
+                  </Stack>
 
-                <Stack spacing={0.9}>
-                  <Typography sx={{ fontWeight: 800 }}>Databases</Typography>
-                  <Typography sx={{ opacity: 0.86 }}>
-                    PostgreSQL, SQL Server, Oracle, Prisma ORM
-                  </Typography>
-                </Stack>
+                  <Stack spacing={0.9}>
+                    <Typography sx={{ fontWeight: 800 }}>Databases</Typography>
+                    <Typography sx={{ opacity: 0.86 }}>
+                      PostgreSQL, SQL Server, Oracle, Prisma ORM
+                    </Typography>
+                  </Stack>
 
-                <Stack spacing={0.9}>
-                  <Typography sx={{ fontWeight: 800 }}>Languages</Typography>
-                  <Typography sx={{ opacity: 0.86 }}>
-                    English (Native), Japanese (Conversational)
-                  </Typography>
-                </Stack>
+                  <Stack spacing={0.9}>
+                    <Typography sx={{ fontWeight: 800 }}>Languages</Typography>
+                    <Typography sx={{ opacity: 0.86 }}>
+                      English (Native), Japanese (Conversational)
+                    </Typography>
+                  </Stack>
 
-                <Stack spacing={0.9}>
-                  <Typography sx={{ fontWeight: 800 }}>Other</Typography>
-                  <Typography sx={{ opacity: 0.86 }}>
-                    GitHub Actions, CI/CD, Multi-tenant architecture
-                  </Typography>
-                </Stack>
-              </Box>
-            </Paper>
+                  <Stack spacing={0.9}>
+                    <Typography sx={{ fontWeight: 800 }}>Other</Typography>
+                    <Typography sx={{ opacity: 0.86 }}>
+                      GitHub Actions, CI/CD, Multi-tenant architecture
+                    </Typography>
+                  </Stack>
+                </Box>
+              </Paper>
+            </Box>
           </Stack>
         </Stack>
       </Stack>
