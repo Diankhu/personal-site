@@ -2,10 +2,7 @@
 
 import React from "react";
 import { AppBar, Toolbar, Box, Button } from "@mui/material";
-
-export type NavBarProps = {
-  visible: boolean;
-};
+import { useNav } from "../NavContext";
 
 const NAV_HEIGHT = { xs: 84, md: 95 };
 
@@ -27,7 +24,7 @@ const navButtonSx = {
     position: "absolute",
     left: 16,
     right: 16,
-    bottom: 18, // tweak with height
+    bottom: 18,
     height: 2,
     background: "#ff3b3b",
     transform: "scaleX(0)",
@@ -44,7 +41,9 @@ const navButtonSx = {
   },
 } as const;
 
-export default function NavBar({ visible }: NavBarProps) {
+export default function NavBar() {
+  const { visible } = useNav();
+
   return (
     <AppBar
       position="fixed"
@@ -72,7 +71,7 @@ export default function NavBar({ visible }: NavBarProps) {
       <Toolbar
         sx={{
           height: NAV_HEIGHT,
-          minHeight: "unset", // override MUI default min-height: 64px
+          minHeight: "unset",
           px: { xs: 2, md: 6 },
           display: "flex",
           alignItems: "center",
@@ -80,13 +79,13 @@ export default function NavBar({ visible }: NavBarProps) {
         }}
       >
         <Box sx={{ display: "flex", gap: 1.5, height: "100%" }}>
-          <Button href="#profile" sx={navButtonSx}>
+          <Button href="/#profile" sx={navButtonSx}>
             Profile
           </Button>
-          <Button href="#work" sx={navButtonSx}>
+          <Button href="/#work" sx={navButtonSx}>
             Work
           </Button>
-          <Button href="#contact" sx={navButtonSx}>
+          <Button href="/#contact" sx={navButtonSx}>
             Contact
           </Button>
         </Box>

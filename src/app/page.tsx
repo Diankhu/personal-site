@@ -1,18 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import NavBar from "./components/NavBar";
+import { useEffect, useRef } from "react";
 import HeroWebGL from "./components/HeroWebGL";
 import ProfileSection from "./components/ProfileSection";
 import WorkSection from "./components/WorkSection";
 import { Box } from "@mui/material";
 import ContactSection from "./components/ContactSection";
+import { useNav } from "./NavContext";
 
 export default function Home() {
   const heroExitRef = useRef<HTMLDivElement | null>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
-
-  const [navVisible, setNavVisible] = useState<boolean>(false);
+  const { setVisible } = useNav();
 
   useEffect(() => {
     const el = heroExitRef.current;
@@ -20,29 +19,22 @@ export default function Home() {
 
     const io = new IntersectionObserver(
       ([entry]) => {
-        // When sentinel is visible, you're still basically in hero => hide nav
-        // Once it scrolls out of view, you're in content => show nav
-        setNavVisible(!entry.isIntersecting);
+        setVisible(!entry.isIntersecting);
       },
       {
-        // threshold 0 is fine since it's a 1px sentinel
         threshold: 0,
-        // optional: reveal nav a touch later by pushing the observer line down
         rootMargin: "-40px 0px 0px 0px",
       },
     );
 
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [setVisible]);
 
   return (
     <main>
-      <NavBar visible={navVisible} />
-
       <HeroWebGL />
 
-      {/* Fade band */}
       <Box
         sx={{
           height: 180,
@@ -55,7 +47,6 @@ export default function Home() {
         }}
       />
 
-      {/* 🔥 Sentinel: once you scroll past this, nav stays on */}
       <Box ref={heroExitRef} sx={{ height: 1 }} />
 
       <ProfileSection sectionRef={profileRef} />

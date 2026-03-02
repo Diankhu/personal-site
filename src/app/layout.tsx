@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "./providers";
-import Footer from "./components/Footer"; // adjust path if needed
+import Footer from "./components/Footer";
+import NavBar from "./components/NavBar";
+import { NavProvider } from "./NavContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,9 +23,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
@@ -35,8 +37,13 @@ export default function RootLayout({
         }}
       >
         <Providers>
-          <div style={{ flex: 1 }}>{children}</div>
-          <Footer />
+          <NavProvider>
+            <NavBar />
+
+            <div style={{ flex: 1 }}>{children}</div>
+
+            <Footer />
+          </NavProvider>
         </Providers>
       </body>
     </html>

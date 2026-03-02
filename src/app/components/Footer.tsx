@@ -9,7 +9,10 @@ export default function Footer() {
       sx={{
         px: { xs: 2, md: 8 },
         py: 6,
-        background: "linear-gradient(90deg, #1e3a66 0%, #254a82 100%)",
+
+        // Deep navy like your example
+        background: "linear-gradient(180deg, #0b1f33 0%, #071423 100%)",
+
         color: "rgba(255,255,255,0.75)",
       }}
     >

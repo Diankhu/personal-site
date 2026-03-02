@@ -89,7 +89,7 @@ const projects: Project[] = [
       "Stripe",
       "Cognito",
     ],
-    href: "/work/symon-rental",
+    href: "/projects/symon-rental",
   },
   {
     title: "White’s Auto Glass & Trim",
@@ -101,14 +101,14 @@ const projects: Project[] = [
       "UX Focused",
       "Squarespace",
     ],
-    href: "/work/whites-auto-glass",
+    href: "/projects/whites-auto-glass",
   },
   {
     title: "Personal Portfolio Website (Flask)",
     description:
       "Full-stack Flask application deployed to Google Cloud to serve dynamic content and project pages. Built the routing + templating layer, structured the backend for maintainability, and shipped a production deployment setup with environment-based configuration.",
     chips: ["Flask", "Python", "Google Cloud", "Full-Stack"],
-    href: "/work/flask-portfolio",
+    href: "/projects/flask-portfolio",
   },
 ];
 
