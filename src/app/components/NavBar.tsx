@@ -7,6 +7,39 @@ export type NavBarProps = {
   visible: boolean;
 };
 
+const navButtonSx = {
+  color: "rgba(255,255,255,0.92)",
+  fontWeight: 700,
+  fontSize: 14,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
+  px: 2,
+  position: "relative",
+  transition: "color 180ms ease",
+
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    left: 16,
+    right: 16,
+    bottom: 8,
+    height: 2,
+    background: "#ff3b3b",
+    transform: "scaleX(0)",
+    transformOrigin: "left",
+    transition: "transform 200ms ease",
+  },
+
+  "&:hover": {
+    color: "#ffffff",
+    backgroundColor: "rgba(255,255,255,0.05)",
+
+    "&::after": {
+      transform: "scaleX(1)",
+    },
+  },
+} as const;
+
 export default function NavBar({ visible }: NavBarProps) {
   return (
     <AppBar
@@ -14,32 +47,39 @@ export default function NavBar({ visible }: NavBarProps) {
       elevation={0}
       sx={{
         background: `
-      linear-gradient(
-        135deg,
-        rgba(10, 25, 55, 0.95) 0%,
-        rgba(15, 45, 95, 0.92) 50%,
-        rgba(25, 65, 140, 0.90) 100%
-      )
-    `,
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
+          linear-gradient(
+            135deg,
+            rgba(10, 25, 55, 0.96) 0%,
+            rgba(15, 45, 95, 0.94) 50%,
+            rgba(25, 65, 140, 0.92) 100%
+          )
+        `,
+        backdropFilter: "blur(14px)",
+        WebkitBackdropFilter: "blur(14px)",
         borderBottom: "1px solid rgba(255,255,255,0.08)",
-        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.25)",
+        boxShadow: "0 8px 28px rgba(0, 0, 0, 0.30)",
         transform: visible ? "translateY(0)" : "translateY(-100%)",
         opacity: visible ? 1 : 0,
-        transition: "transform 240ms ease, opacity 240ms ease",
+        transition: "transform 260ms ease, opacity 260ms ease",
         pointerEvents: visible ? "auto" : "none",
       }}
     >
-      <Toolbar>
-        <Box sx={{ ml: "auto", display: "flex", gap: 2 }}>
-          <Button href="#profile" sx={{ color: "#fff" }}>
+      <Toolbar
+        sx={{
+          minHeight: 80,
+          px: { xs: 2, md: 6 },
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <Box sx={{ ml: "auto", display: "flex", gap: 1.5 }}>
+          <Button href="#profile" sx={navButtonSx}>
             Profile
           </Button>
-          <Button href="#work" sx={{ color: "#fff" }}>
+          <Button href="#work" sx={navButtonSx}>
             Work
           </Button>
-          <Button href="#contact" sx={{ color: "#fff" }}>
+          <Button href="#contact" sx={navButtonSx}>
             Contact
           </Button>
         </Box>

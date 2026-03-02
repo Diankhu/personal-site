@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
+
+  images: {
+    qualities: [75, 95],
+  },
 };
 
 export default nextConfig;

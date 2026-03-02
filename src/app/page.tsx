@@ -5,6 +5,7 @@ import NavBar from "./components/NavBar";
 import HeroWebGL from "./components/HeroWebGL";
 import ProfileSection from "./components/ProfileSection";
 import { Box } from "@mui/material";
+import WorkSection from "./components/WorkSection";
 
 export default function Home() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -46,6 +47,7 @@ export default function Home() {
       />
       {/* content under hero */}
       <ProfileSection sectionRef={sectionRef} />
+      <WorkSection />
     </main>
   );
 }
