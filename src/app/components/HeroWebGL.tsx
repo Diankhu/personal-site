@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 type PetalState = {
@@ -101,9 +101,17 @@ function WindyBackground({
 
         col += vec3(mist) + vec3(bright);
 
+        // film grain
         float g = hash(p * (350.0 + 30.0 * sin(t))) - 0.5;
         col += vec3(g * 0.02);
 
+        // subtle sun glow
+        vec2 sunPos = vec2(0.78, 0.82);
+        float d = distance(vUv, sunPos);
+        float sun = smoothstep(0.35, 0.0, d);
+        col += vec3(0.10, 0.12, 0.08) * sun;
+
+        // vignette
         float dx = vUv.x - 0.5;
         float dy = vUv.y - 0.5;
         float vig = smoothstep(0.95, 0.25, sqrt(dx*dx + dy*dy));
@@ -146,129 +154,6 @@ function WindyBackground({
       <primitive object={material} ref={matRef} attach="material" />
     </mesh>
   );
-}
-
-function makePetalTextureVariant(variant: 0 | 1 | 2): THREE.CanvasTexture {
-  const size = 256;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.needsUpdate = true;
-    return tex;
-  }
-
-  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
-  ctx.clearRect(0, 0, size, size);
-  ctx.save();
-  ctx.translate(size / 2, size / 2);
-
-  const topY = -92 + variant * 3;
-  const bottomY = 112 - variant * 4;
-
-  const rightA = 76 + variant * 6;
-  const rightB = 96 - variant * 4;
-  const leftA = -92 + variant * 2;
-  const leftB = -70 - variant * 6;
-
-  const tipX = variant === 1 ? 6 : variant === 2 ? -7 : 0;
-
-  ctx.beginPath();
-  ctx.moveTo(tipX, topY);
-
-  ctx.bezierCurveTo(
-    rightA,
-    lerp(topY, 0, 0.3),
-    rightB,
-    lerp(topY, 0, 0.72),
-    12,
-    bottomY,
-  );
-
-  ctx.bezierCurveTo(
-    leftA,
-    lerp(topY, 0, 0.78),
-    leftB,
-    lerp(topY, 0, 0.22),
-    tipX,
-    topY,
-  );
-
-  ctx.closePath();
-
-  const base = ctx.createRadialGradient(-28, -50, 8, 0, 10, 200);
-  base.addColorStop(0.0, "rgba(255,248,252,0.98)");
-  base.addColorStop(0.25, "rgba(255,214,235,0.96)");
-  base.addColorStop(0.55, "rgba(255,160,205,0.86)");
-  base.addColorStop(1.0, "rgba(255,150,200,0.00)");
-
-  ctx.fillStyle = base;
-  ctx.fill();
-
-  ctx.globalCompositeOperation = "source-atop";
-  ctx.globalAlpha = 0.28;
-  const edge = ctx.createRadialGradient(0, 55, 55, 0, 55, 185);
-  edge.addColorStop(0.0, "rgba(255,160,205,0.0)");
-  edge.addColorStop(0.72, "rgba(255,120,185,0.14)");
-  edge.addColorStop(1.0, "rgba(255,80,165,0.34)");
-  ctx.fillStyle = edge;
-  ctx.fillRect(-size / 2, -size / 2, size, size);
-
-  ctx.globalCompositeOperation = "source-atop";
-  ctx.lineCap = "round";
-
-  const veinAlpha = variant === 2 ? 0.22 : 0.18;
-  const veinCount = variant === 0 ? 5 : variant === 1 ? 6 : 7;
-
-  for (let i = 0; i < veinCount; i++) {
-    const t = i / (veinCount - 1);
-    const x0 = lerp(-52, 52, t) + (variant === 1 ? 4 : 0);
-    const w = lerp(1.2, 2.6, 1 - Math.abs(t - 0.5) * 2);
-
-    ctx.globalAlpha = veinAlpha * (0.35 + 0.65 * (1 - Math.abs(t - 0.5) * 2));
-    ctx.strokeStyle = "rgba(255,255,255,0.95)";
-    ctx.lineWidth = w;
-
-    ctx.beginPath();
-    ctx.moveTo(x0 * 0.2, topY + 18);
-    ctx.quadraticCurveTo(x0 * 0.35, 0, x0 * 0.12, bottomY - 10);
-    ctx.stroke();
-  }
-
-  ctx.globalAlpha = 0.22;
-  const sheen = ctx.createRadialGradient(-45, -60, 18, -10, -10, 155);
-  sheen.addColorStop(0, "rgba(255,255,255,0.75)");
-  sheen.addColorStop(1, "rgba(255,255,255,0.0)");
-  ctx.fillStyle = sheen;
-  ctx.fillRect(-size / 2, -size / 2, size, size);
-
-  ctx.globalCompositeOperation = "source-atop";
-  ctx.globalAlpha = 0.14;
-  for (let y = -size / 2; y < size / 2; y += 2) {
-    for (let x = -size / 2; x < size / 2; x += 2) {
-      const n = Math.sin((x * 12.9898 + y * 78.233) * 0.02) * 43758.5453;
-      const f = n - Math.floor(n);
-      if (f > 0.92) {
-        ctx.fillStyle = `rgba(255,255,255,${(f - 0.92) * 0.6})`;
-        ctx.fillRect(x, y, 1, 1);
-      }
-    }
-  }
-
-  ctx.restore();
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.wrapS = THREE.ClampToEdgeWrapping;
-  tex.wrapT = THREE.ClampToEdgeWrapping;
-  tex.minFilter = THREE.LinearMipMapLinearFilter;
-  tex.magFilter = THREE.LinearFilter;
-  tex.anisotropy = 8;
-  tex.needsUpdate = true;
-  return tex;
 }
 
 function makePetals(count: number, initialBurst: boolean): PetalState[] {
@@ -329,41 +214,109 @@ function makeCurvedPetalGeometry(): THREE.BufferGeometry {
   return geo;
 }
 
-function PetalLayer({
+function PetalAtlasLayer({
   count,
   windRef,
-  variant,
+  tilesUsed,
+  gridSize,
 }: {
   count: number;
   windRef: React.MutableRefObject<number>;
-  variant: 0 | 1 | 2;
+  tilesUsed: number; // you have 9
+  gridSize: number; // 4 (4x4 atlas)
 }) {
-  const meshRef = useRef<THREE.InstancedMesh | null>(null);
+  const { camera } = useThree();
 
+  const meshRef = useRef<THREE.InstancedMesh | null>(null);
   const petalsRef = useRef<PetalState[]>(makePetals(count, true));
   const dummyRef = useRef<THREE.Object3D>(new THREE.Object3D());
-  const baseColorRef = useRef<THREE.Color>(new THREE.Color("#ffd1e6"));
-  const texRef = useRef<THREE.CanvasTexture | null>(null);
 
   const curvedGeo = useMemo(() => makeCurvedPetalGeometry(), []);
+
+  // Per-instance tile selection (0..tilesUsed-1)
+  const tileAttr = useMemo(() => {
+    const arr = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      arr[i] = Math.floor(rand(i * 91.7 + 0.17) * tilesUsed);
+    }
+    return new THREE.InstancedBufferAttribute(arr, 1);
+  }, [count, tilesUsed]);
+
+  const material = useMemo(() => {
+    const tex = new THREE.TextureLoader().load("/petals/petals_atlas.png");
+    tex.wrapS = THREE.ClampToEdgeWrapping;
+    tex.wrapT = THREE.ClampToEdgeWrapping;
+    tex.minFilter = THREE.LinearMipMapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.anisotropy = 8;
+    tex.needsUpdate = true;
+
+    return new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      uniforms: {
+        uMap: { value: tex },
+        uGrid: { value: gridSize },
+      },
+      vertexShader: `
+        attribute float aTile;
+        varying vec2 vUv;
+
+        uniform float uGrid;
+
+        void main() {
+          float tile = floor(aTile + 0.5);
+          float gx = uGrid;
+          float tx = mod(tile, gx);
+          float tyImg = floor(tile / gx);
+          float ty = (gx - 1.0) - tyImg; // <-- flip Y (image rows -> UV rows)
+
+          vec2 cell = vec2(1.0 / gx, 1.0 / gx);
+
+          // small inset to prevent edge bleeding
+          float pad = 0.0025;
+          vec2 uvInset = uv * (1.0 - 2.0 * pad) + pad;
+
+          vUv = uvInset * cell + vec2(tx, ty) * cell;
+
+          gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        precision highp float;
+        uniform sampler2D uMap;
+        varying vec2 vUv;
+
+        void main() {
+          vec4 c = texture2D(uMap, vUv);
+
+          // kill empty atlas cells + soft edges
+          if (c.a < 0.04) discard;
+
+          // small boost so petals read on bright sky
+          c.rgb = mix(c.rgb, c.rgb * 1.06, 0.6);
+
+          gl_FragColor = c;
+        }
+      `,
+    });
+  }, [gridSize]);
 
   React.useEffect(() => {
     return () => {
       curvedGeo.dispose();
+      material.uniforms.uMap.value.dispose();
+      material.dispose();
     };
-  }, [curvedGeo]);
+  }, [curvedGeo, material]);
 
   React.useEffect(() => {
-    texRef.current = makePetalTextureVariant(variant);
-    return () => {
-      texRef.current?.dispose();
-      texRef.current = null;
-    };
-  }, [variant]);
-
-  React.useEffect(() => {
-    petalsRef.current = makePetals(count, true);
-  }, [count]);
+    const m = meshRef.current;
+    if (!m) return;
+    const g = m.geometry as THREE.InstancedBufferGeometry;
+    g.setAttribute("aTile", tileAttr);
+  }, [tileAttr]);
 
   useFrame((_, delta) => {
     const m = meshRef.current;
@@ -383,22 +336,7 @@ function PetalLayer({
     const leftX = -10.5;
     const rightX = 10.5;
 
-    const mat = m.material;
-
-    if (
-      (mat instanceof THREE.MeshStandardMaterial ||
-        mat instanceof THREE.MeshPhysicalMaterial) &&
-      texRef.current &&
-      mat.map !== texRef.current
-    ) {
-      mat.map = texRef.current;
-      mat.alphaMap = texRef.current;
-      mat.transparent = true;
-      mat.depthWrite = false;
-      mat.needsUpdate = true;
-    }
-
-    const baseTrickle = variant === 0 ? 0.55 : variant === 1 ? 0.45 : 0.35;
+    const baseTrickle = 0.45;
 
     for (let i = 0; i < petals.length; i++) {
       const p = petals[i];
@@ -414,22 +352,19 @@ function PetalLayer({
             (rand(p.seed + 3) - 0.5) * 2,
           );
 
-          const speedMul = variant === 0 ? 1.0 : variant === 1 ? 0.85 : 0.7;
-
           p.vel.set(
             (rand(p.seed + 4) - 0.5) * 0.16,
-            (-0.32 - rand(p.seed + 5) * 0.5) * speedMul,
+            -0.32 - rand(p.seed + 5) * 0.5,
             (rand(p.seed + 6) - 0.5) * 0.1,
           );
 
-          const s = 0.06 + rand(p.seed + 7) * 0.1;
-          p.scale = s * (variant === 0 ? 1.05 : variant === 1 ? 0.92 : 0.8);
+          p.scale = 0.07 + rand(p.seed + 7) * 0.11;
+        } else {
+          dummy.position.set(0, -999, 0);
+          dummy.updateMatrix();
+          m.setMatrixAt(i, dummy.matrix);
+          continue;
         }
-
-        dummy.position.set(0, -999, 0);
-        dummy.updateMatrix();
-        m.setMatrixAt(i, dummy.matrix);
-        continue;
       }
 
       const flutter = Math.sin(now * 2.2 + p.seed) * 0.18;
@@ -440,8 +375,6 @@ function PetalLayer({
       p.vel.multiplyScalar(0.995);
       p.pos.addScaledVector(p.vel, dt);
 
-      p.rot.x += p.rotVel.x * dt;
-      p.rot.y += p.rotVel.y * dt;
       p.rot.z += (p.rotVel.z + flutter * 0.6) * dt;
 
       if (p.pos.y < bottomY || p.pos.x < leftX || p.pos.x > rightX) {
@@ -450,59 +383,28 @@ function PetalLayer({
       }
 
       dummy.position.copy(p.pos);
-      dummy.rotation.copy(p.rot);
+
+      // billboard toward camera, keep Z spin
+      dummy.quaternion.copy(camera.quaternion);
+      dummy.rotation.z += p.rot.z;
 
       const squish = 0.72 + 0.28 * Math.sin(now * 1.6 + p.seed);
-      dummy.scale.set(p.scale * 1.25, p.scale * squish, p.scale);
+      dummy.scale.set(p.scale * 1.35, p.scale * squish * 1.05, p.scale);
 
       dummy.updateMatrix();
       m.setMatrixAt(i, dummy.matrix);
     }
 
     m.instanceMatrix.needsUpdate = true;
-
-    if (
-      mat instanceof THREE.MeshStandardMaterial ||
-      mat instanceof THREE.MeshPhysicalMaterial
-    ) {
-      const pulse = 0.02 * Math.sin(now * 0.9);
-      mat.color.copy(baseColorRef.current).offsetHSL(0, 0, pulse);
-
-      mat.emissive = new THREE.Color("#ffb6d6");
-      mat.emissiveIntensity = 0.05;
-
-      mat.roughness = 0.88;
-      mat.metalness = 0.0;
-    }
   });
 
-  return (
-    <instancedMesh ref={meshRef} args={[curvedGeo, undefined, count]}>
-      <meshPhysicalMaterial
-        color={"#ffd1e6"}
-        transparent
-        opacity={0.95}
-        roughness={0.85}
-        metalness={0.0}
-        depthWrite={false}
-        side={THREE.DoubleSide}
-        transmission={0.25}
-        thickness={0.2}
-        ior={1.1}
-        emissive={"#ffb6d6"}
-        emissiveIntensity={0.05}
-      />
-    </instancedMesh>
-  );
+  return <instancedMesh ref={meshRef} args={[curvedGeo, material, count]} />;
 }
 
 function Petals({ windRef }: { windRef: React.MutableRefObject<number> }) {
+  // You have 5 tiles used in a 4x4 atlas.
   return (
-    <>
-      <PetalLayer windRef={windRef} variant={0} count={140} />
-      <PetalLayer windRef={windRef} variant={1} count={140} />
-      <PetalLayer windRef={windRef} variant={2} count={120} />
-    </>
+    <PetalAtlasLayer windRef={windRef} count={360} tilesUsed={5} gridSize={4} />
   );
 }
 
@@ -513,8 +415,8 @@ export default function HeroWebGL() {
     <section style={{ height: "100vh", width: "100%", position: "relative" }}>
       <Canvas
         camera={{ position: [0, 0, 5], fov: 50 }}
-        gl={{ antialias: true }}
-        dpr={[1, 2]}
+        gl={{ antialias: true, powerPreference: "high-performance" }}
+        dpr={[1, 1.5]}
         style={{ position: "absolute", inset: 0 }}
       >
         <ambientLight intensity={1.1} />
