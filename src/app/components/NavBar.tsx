@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
+import { AppBar, Toolbar, Box, Button } from "@mui/material";
 
 export type NavBarProps = {
   visible: boolean;
@@ -32,10 +32,6 @@ export default function NavBar({ visible }: NavBarProps) {
       }}
     >
       <Toolbar>
-        <Typography variant="h6" sx={{ fontWeight: 800, color: "#fff" }}>
-          Tyler White
-        </Typography>
-
         <Box sx={{ ml: "auto", display: "flex", gap: 2 }}>
           <Button href="#profile" sx={{ color: "#fff" }}>
             Profile
