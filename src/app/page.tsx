@@ -4,25 +4,32 @@ import { useEffect, useRef, useState } from "react";
 import NavBar from "./components/NavBar";
 import HeroWebGL from "./components/HeroWebGL";
 import ProfileSection from "./components/ProfileSection";
-import { Box } from "@mui/material";
 import WorkSection from "./components/WorkSection";
+import { Box } from "@mui/material";
+import ContactSection from "./components/ContactSection";
 
 export default function Home() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const heroExitRef = useRef<HTMLDivElement | null>(null);
+  const profileRef = useRef<HTMLDivElement | null>(null);
+
   const [navVisible, setNavVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const el = sectionRef.current;
+    const el = heroExitRef.current;
     if (!el) return;
 
     const io = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        // “fully in profile” feel (tweak if you want earlier)
-        const show = entry.isIntersecting && entry.intersectionRatio >= 0.7;
-        setNavVisible(show);
+      ([entry]) => {
+        // When sentinel is visible, you're still basically in hero => hide nav
+        // Once it scrolls out of view, you're in content => show nav
+        setNavVisible(!entry.isIntersecting);
       },
-      { threshold: [0, 0.25, 0.6, 1] },
+      {
+        // threshold 0 is fine since it's a 1px sentinel
+        threshold: 0,
+        // optional: reveal nav a touch later by pushing the observer line down
+        rootMargin: "-40px 0px 0px 0px",
+      },
     );
 
     io.observe(el);
@@ -32,11 +39,13 @@ export default function Home() {
   return (
     <main>
       <NavBar visible={navVisible} />
+
       <HeroWebGL />
+
+      {/* Fade band */}
       <Box
         sx={{
           height: 180,
-          // pull this band up over the bottom of the hero
           mt: "-180px",
           position: "relative",
           zIndex: 2,
@@ -45,9 +54,13 @@ export default function Home() {
             "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.65) 40%, rgba(255,255,255,1) 100%)",
         }}
       />
-      {/* content under hero */}
-      <ProfileSection sectionRef={sectionRef} />
+
+      {/* 🔥 Sentinel: once you scroll past this, nav stays on */}
+      <Box ref={heroExitRef} sx={{ height: 1 }} />
+
+      <ProfileSection sectionRef={profileRef} />
       <WorkSection />
+      <ContactSection />
     </main>
   );
 }

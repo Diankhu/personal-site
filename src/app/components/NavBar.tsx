@@ -7,6 +7,8 @@ export type NavBarProps = {
   visible: boolean;
 };
 
+const NAV_HEIGHT = { xs: 84, md: 95 };
+
 const navButtonSx = {
   color: "rgba(255,255,255,0.92)",
   fontWeight: 700,
@@ -16,13 +18,16 @@ const navButtonSx = {
   px: 2,
   position: "relative",
   transition: "color 180ms ease",
+  height: "100%",
+  display: "flex",
+  alignItems: "center",
 
   "&::after": {
     content: '""',
     position: "absolute",
     left: 16,
     right: 16,
-    bottom: 8,
+    bottom: 18, // tweak with height
     height: 2,
     background: "#ff3b3b",
     transform: "scaleX(0)",
@@ -33,7 +38,6 @@ const navButtonSx = {
   "&:hover": {
     color: "#ffffff",
     backgroundColor: "rgba(255,255,255,0.05)",
-
     "&::after": {
       transform: "scaleX(1)",
     },
@@ -58,6 +62,7 @@ export default function NavBar({ visible }: NavBarProps) {
         WebkitBackdropFilter: "blur(14px)",
         borderBottom: "1px solid rgba(255,255,255,0.08)",
         boxShadow: "0 8px 28px rgba(0, 0, 0, 0.30)",
+
         transform: visible ? "translateY(0)" : "translateY(-100%)",
         opacity: visible ? 1 : 0,
         transition: "transform 260ms ease, opacity 260ms ease",
@@ -66,13 +71,15 @@ export default function NavBar({ visible }: NavBarProps) {
     >
       <Toolbar
         sx={{
-          minHeight: 80,
+          height: NAV_HEIGHT,
+          minHeight: "unset", // override MUI default min-height: 64px
           px: { xs: 2, md: 6 },
           display: "flex",
           alignItems: "center",
+          justifyContent: "flex-end",
         }}
       >
-        <Box sx={{ ml: "auto", display: "flex", gap: 1.5 }}>
+        <Box sx={{ display: "flex", gap: 1.5, height: "100%" }}>
           <Button href="#profile" sx={navButtonSx}>
             Profile
           </Button>

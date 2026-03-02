@@ -78,7 +78,7 @@ const projects: Project[] = [
   {
     title: "Symon Rental",
     description:
-      "A production multi-tenant SaaS platform supporting rental operations for multiple businesses. I designed and built the full-stack system including admin dashboard, serverless backend, relational data models, authentication (Cognito), and Stripe-based billing workflows.",
+      "Production multi-tenant rental platform I architected and built end-to-end — admin dashboard, serverless APIs, and a relational data model designed for real operations. Includes business isolation, inventory + order workflows, image delivery (S3/CloudFront), authentication/authorization (Cognito/JWT), and Stripe payments for billing and checkout.",
     chips: [
       "Next.js",
       "TypeScript",
@@ -94,7 +94,7 @@ const projects: Project[] = [
   {
     title: "White’s Auto Glass & Trim",
     description:
-      "Built and managed a responsive business website to improve online presence and SEO. Focused on clean UX, service clarity, and local search optimization to support real-world customer acquisition.",
+      "Responsive marketing site built to drive local discovery and inbound leads. Designed the information architecture around real customer intent (services, trust signals, contact), optimized for mobile performance, and implemented SEO fundamentals to improve visibility in local search.",
     chips: [
       "Responsive Design",
       "SEO Optimization",
@@ -106,7 +106,7 @@ const projects: Project[] = [
   {
     title: "Personal Portfolio Website (Flask)",
     description:
-      "Developed a full-stack portfolio application using Flask and Python, deployed on Google Cloud. Implemented backend routing, dynamic content rendering, and cloud deployment infrastructure.",
+      "Full-stack Flask application deployed to Google Cloud to serve dynamic content and project pages. Built the routing + templating layer, structured the backend for maintainability, and shipped a production deployment setup with environment-based configuration.",
     chips: ["Flask", "Python", "Google Cloud", "Full-Stack"],
     href: "/work/flask-portfolio",
   },
@@ -200,10 +200,7 @@ export default function WorkSection() {
           "radial-gradient(circle at 15% 20%, rgba(120,180,255,0.12), transparent 55%)",
       }}
     >
-      <Stack
-        spacing={15} // MORE space between header block and content
-        sx={{ maxWidth: 2000, mx: "auto" }}
-      >
+      <Stack spacing={15} sx={{ maxWidth: 2000, mx: "auto" }}>
         <Box sx={{ mb: { xs: 0, md: 2 } }}>
           <Typography
             sx={{
