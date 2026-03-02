@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // ✅ needed for the Docker "standalone" runtime
+  output: "standalone",
+
   turbopack: {
     root: __dirname,
   },
